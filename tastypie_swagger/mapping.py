@@ -1,4 +1,6 @@
 import datetime
+import inspect
+import misaka as markdownrender
 from django.core.urlresolvers import reverse
 from django.db.models.sql.constants import QUERY_TERMS
 from django.utils.encoding import force_unicode
@@ -262,7 +264,7 @@ class ResourceSwaggerMapping(object):
             'parameters': [self.build_parameter(paramType='path', name=self._detail_uri_name(), dataType='int', description='ID of resource')],
             'responseClass': self.resource_name,
             'nickname': '%s-detail' % self.resource_name,
-            'notes': self.resource.__doc__,
+            'notes': markdownrender.html(inspect.getdoc(self.resource)),
         }
         return operation
 
@@ -273,7 +275,7 @@ class ResourceSwaggerMapping(object):
             'parameters': self.build_parameters_for_list(method=method),
             'responseClass': 'ListView' if method.upper() == 'GET' else self.resource_name,
             'nickname': '%s-list' % self.resource_name,
-            'notes': self.resource.__doc__,
+            'notes': markdownrender.html(inspect.getdoc(self.resource)),
         }
 
     def build_extra_operation(self, extra_action):
